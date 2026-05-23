@@ -29,6 +29,29 @@
       }
     },
     {
+      "name": "Bulk Create Orders",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"orders\": [\n    {\n      \"order_id\": \"ORDERBULK1\",\n      \"courier_partner\": \"urbane_bolt\",\n      \"service_type\": \"SDD\",\n      \"pay_mode\": \"PREPAID\",\n      \"cod_amount\": 0,\n      \"shipper\": {\n        \"name\": \"Sender Name\",\n        \"mobile\": \"9876543210\",\n        \"email\": \"sender@example.com\",\n        \"address\": \"123 Sender St\",\n        \"city\": \"Mumbai\",\n        \"state\": \"MH\",\n        \"pincode\": \"400001\",\n        \"country\": \"IN\",\n        \"address_type\": \"HOME\"\n      },\n      \"consignee\": {\n        \"name\": \"Receiver Name\",\n        \"mobile\": \"9123456789\",\n        \"email\": \"receiver@example.com\",\n        \"address\": \"456 Receiver Ave\",\n        \"city\": \"Delhi\",\n        \"state\": \"DL\",\n        \"pincode\": \"110001\",\n        \"country\": \"IN\",\n        \"address_type\": \"OFFICE\"\n      },\n      \"package\": {\n        \"declared_value\": 1000,\n        \"description\": \"Books\",\n        \"height\": 10,\n        \"length\": 20,\n        \"breadth\": 5,\n        \"weight\": 2,\n        \"pieces\": 1,\n        \"item_quantity\": 2\n      },\n      \"courier_meta\": {\n        \"invoice_number\": \"INV123\",\n        \"invoice_date\": \"2026-05-23\",\n        \"invoice_value\": 1000\n      },\n      \"return_address\": {\n        \"name\": \"Return Name\",\n        \"mobile\": \"9876543210\",\n        \"email\": \"return@example.com\",\n        \"address\": \"789 Return St\",\n        \"city\": \"Pune\",\n        \"state\": \"MH\",\n        \"pincode\": \"400001\",\n        \"country\": \"IN\",\n        \"address_type\": \"WAREHOUSE\"\n      }\n    }\n    // ... up to 100 orders\n  ]\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/v1/orders/bulk",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "v1", "orders", "bulk"]
+        }
+      }
+    },
+    {
       "name": "Track Order",
       "request": {
         "method": "GET",

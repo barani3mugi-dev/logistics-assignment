@@ -5,7 +5,7 @@ import {
 } from 'class-validator';
 import { CreateOrderDto } from './create_order.dto';
 
-export class BulkOrderDto {
+export class BulkCreateOrderDto {
   @IsArray()
   @ArrayMinSize(1)
   @ArrayMaxSize(100)

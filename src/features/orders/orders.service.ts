@@ -17,6 +17,7 @@ import {
     CancelResponseDto,
 } from '../tracking_history/dto/track_response.dto';
 import { ShipmentStatus } from 'src/common/enums/shipment_status.enum';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class OrdersService {
@@ -33,7 +34,7 @@ export class OrdersService {
     ) { }
 
 
-    async createOrder(dto: CreateOrderDto): Promise<OrderResponseDto> {
+    async createOrder(dto: CreateOrderDto, batchId?: string): Promise<OrderResponseDto> {
         this.logger.log(`Creating order: ${dto.order_id} via ${dto.courier_partner}`);
 
         const existing = await this.orderRepo.findOne({
@@ -62,6 +63,7 @@ export class OrdersService {
                 : ShipmentStatus.FAILED,
             requestPayload: dto as unknown as object,
             responsePayload: courierResponse.raw_response,
+            batchId: batchId ?? undefined,
             failureReason: courierResponse.success ? undefined : 'Courier rejected the order',
         });
 
@@ -212,23 +214,46 @@ export class OrdersService {
         };
     }
 
-    async createOrderForBatch(
-        dto: CreateOrderDto,
-        batchId: string,
-    ): Promise<{ order_id: string; success: boolean; data?: any; error?: string }> {
+    async createBulkOrders(orders: CreateOrderDto[]) {
+        const batchId = uuidv4();
+
+        await this.processBatch(batchId, orders);
+
+        return {
+            batch_id: batchId,
+            total: orders.length,
+            status: 'PROCESSING',
+            poll_url: `/api/v1/orders/bulk/${batchId}`
+        };
+    }
+
+    private async processBatch(batchId: string, orders: CreateOrderDto[]) {
+        await Promise.allSettled(
+            orders.map(order => this.createOrderForBatch(order, batchId))
+        );
+    }
+
+    async createOrderForBatch(dto: CreateOrderDto, batchId: string) {
         try {
-            const result = await this.createOrder(dto);
+            const result = await this.createOrder(dto, batchId);
             return { order_id: dto.order_id, success: true, data: result };
         } catch (error) {
-            let errorMessage = 'Unknown error';
-            if (error && typeof error === 'object' && 'message' in error && typeof (error as any).message === 'string') {
-                errorMessage = (error as any).message;
-            }
             return {
                 order_id: dto.order_id,
                 success: false,
-                error: errorMessage,
+                error: (error as any)?.message ?? 'Unknown error'
             };
         }
+    }
+
+    async getBatchStatus(batchId: string) {
+        const orders = await this.orderRepo.find({ where: { batchId } });
+        return {
+            batch_id: batchId,
+            total: orders.length,
+            succeeded: orders.filter(o => o.status !== ShipmentStatus.FAILED).length,
+            failed: orders.filter(o => o.status === ShipmentStatus.FAILED).length,
+            orders: orders.map(o => this.toOrderResponse(o))
+        };
     }
 }

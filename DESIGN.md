@@ -1,3 +1,18 @@
+## Bulk Order Processing
+
+The system supports bulk order creation via the `/api/v1/orders/bulk` endpoint:
+
+- Accepts up to 100 orders per request (each can use a different courier).
+- Orders are processed concurrently using asynchronous operations (Promise.allSettled).
+- The endpoint returns a `batch_id` and processing status immediately for responsiveness.
+- Results can be polled using `/api/v1/orders/bulk/{batch_id}`.
+- Idempotency is enforced on `order_id` (no duplicate shipments).
+- Partial success is supported; the batch status shows per-order success/failure.
+
+**Trade-offs:**
+- Immediate response with batch_id keeps the API responsive, even for large batches.
+- Polling for results is simple to implement and avoids long HTTP requests.
+- For production, consider background jobs or streaming for even larger batches.
 # Logistics Assignment – Design Document
 
 ## Overview

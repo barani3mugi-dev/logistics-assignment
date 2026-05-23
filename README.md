@@ -7,9 +7,18 @@ This project is a logistics management system built with NestJS, following a str
 
 - Courier partner integration (adapters, factories, mocks)
 - Order management (create, bulk, entity, DTOs)
+- Bulk order processing (up to 100 orders per request)
 - Shipment tracking history
 - Modular and scalable architecture
 - Exception filters and response interceptors
+## Bulk Order Processing
+
+- Use the `/api/v1/orders/bulk` endpoint to create up to 100 orders in a single request.
+- Each order can use a different `courier_partner`.
+- Orders are processed concurrently for responsiveness.
+- The response returns a `batch_id` and processing status. Use `/api/v1/orders/bulk/{batch_id}` to poll for results.
+- The endpoint is idempotent on `order_id` (no duplicate shipments).
+- Partial success is supported: the batch status shows per-order success/failure.
 
 ## Project Structure
 

@@ -4,6 +4,7 @@ import {
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create_order.dto';
+import { BulkCreateOrderDto } from './dto/bulk_order.dto';
 
 @Controller('api/v1/orders')
 export class OrdersController {
@@ -28,4 +29,14 @@ export class OrdersController {
     this.logger.log(`POST /api/v1/orders/${orderId}/cancel`);
     return this.ordersService.cancelOrder(orderId);
   }
+  
+@Post('bulk')
+async createBulkOrders(@Body() dto: BulkCreateOrderDto) {
+  return this.ordersService.createBulkOrders(dto.orders);
+}
+
+@Get('bulk/:batch_id')
+async getBatchStatus(@Param('batch_id') batchId: string) {
+  return this.ordersService.getBatchStatus(batchId);
+}
 }

@@ -18,22 +18,22 @@ export class Order {
     courierPartner: string;
 
     @Column({ nullable: true })
-    courierOrderId: string;        // ID returned by courier
+    courierOrderId: string;        
 
     @Column({ nullable: true })
-    awbNumber: string;             // tracking number from courier
+    awbNumber: string;       
 
     @Column({ type: 'enum', enum: ShipmentStatus, default: ShipmentStatus.CREATED })
     status: ShipmentStatus;
 
     @Column({ type: 'jsonb', nullable: true })
-    requestPayload: object;        // full payload sent to courier (audit)
+    requestPayload: object;     
 
     @Column({ type: 'jsonb', nullable: true })
-    responsePayload: object;       // full response from courier (audit)
+    responsePayload: object;     
 
-    @Column({ nullable: true })
-    batchId: string;               // links to a bulk request
+    @Column({ nullable: true, type: 'varchar' })
+    batchId: string | undefined;   
 
     @Column({ nullable: true })
     failureReason: string;
