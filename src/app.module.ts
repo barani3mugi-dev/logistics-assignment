@@ -21,7 +21,7 @@ TypeOrmModule.forRootAsync({
     url: config.get('DATABASE_URL'),
     ssl: { rejectUnauthorized: false },  // required for Supabase
     entities: [Order, TrackingHistory],
-    synchronize: config.get('NODE_ENV') !== 'production',
+    synchronize: false,
     logging: config.get('NODE_ENV') === 'development',
   }),
 }),
