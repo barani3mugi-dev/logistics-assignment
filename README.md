@@ -58,3 +58,7 @@ This project is a logistics management system built with NestJS, following a str
 - Includes mock adapters for testing and demonstration.
 - Follows best practices for DTOs, entities, and service layers.
 
+## Known Issues
+
+- **Track Order** and **Cancel Order** endpoints may not work as expected with the UrbaneBolt (UB) courier integration. Even if the order is created and present in the local database, the AWB number generated is not recognized by UB, resulting in errors when tracking or cancelling orders.
+
